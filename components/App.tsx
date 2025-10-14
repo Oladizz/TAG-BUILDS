@@ -12,10 +12,17 @@ import MintScreen from './screens/MintScreen';
 import { ToastContainer } from './ToastContainer';
 import LoadingScreen from './LoadingScreen';
 import { getTagIdByWalletAddress } from '../services/backendApi';
+import BackgroundTags from './BackgroundTags';
+import LandingPage from './LandingPage';
+import FloatingProfileTags from './FloatingProfileTags';
 
 export type Tab = 'id' | 'verify' | 'profile' | 'mint';
 
-const Wizard: React.FC = () => {
+interface WizardProps {
+    onLogoClick: () => void;
+}
+
+const Wizard: React.FC<WizardProps> = ({ onLogoClick }) => {
     const [activeTab, setActiveTab] = useState<Tab>('id');
 
     const renderActiveScreen = () => {
@@ -37,7 +44,14 @@ const Wizard: React.FC = () => {
         <div className="h-full w-full selection:bg-green-500/30">
             <ToastContainer />
             <div className="relative w-full h-full overflow-hidden">
-                <Header activeTab={activeTab} />
+                <BackgroundTags />
+                {activeTab === 'id' && (
+                    <>
+                        <FloatingProfileTags variant="background" />
+                        <FloatingProfileTags variant="foreground" />
+                    </>
+                )}
+                <Header activeTab={activeTab} onLogoClick={onLogoClick} />
                 
                 <main className="h-full w-full overflow-y-auto custom-scrollbar">
                     <div className="pt-28 pb-32 px-6">
@@ -57,7 +71,19 @@ const Wizard: React.FC = () => {
 const AppContent: React.FC = () => {
     const { state, dispatch } = useTagId();
     const { walletAddress, isConnected } = useWallet();
-    const [appStatus, setAppStatus] = useState<'initializing' | 'wizard' | 'explorer'>('initializing');
+    
+    const getInitialStatus = (): 'landing' | 'initializing' => {
+        try {
+            if (localStorage.getItem('hasVisitedTagApp') === 'true') {
+                return 'initializing';
+            }
+        } catch (e) {
+            console.error('Could not access localStorage', e);
+        }
+        return 'landing';
+    };
+
+    const [appStatus, setAppStatus] = useState<'landing' | 'initializing' | 'wizard' | 'explorer'>(getInitialStatus);
 
     useEffect(() => {
         const checkForExistingId = async () => {
@@ -69,7 +95,9 @@ const AppContent: React.FC = () => {
                         setAppStatus('explorer');
                     } else {
                         // Wallet connected, but no ID, start the wizard
-                        dispatch({ type: 'RESET_STATE' });
+                        if (!state.tagName) { // only reset if no name was passed from landing
+                            dispatch({ type: 'RESET_STATE' });
+                        }
                         setAppStatus('wizard');
                     }
                 } catch (error) {
@@ -78,14 +106,18 @@ const AppContent: React.FC = () => {
                     setAppStatus('wizard');
                 }
             } else {
-                // Not connected, go to wizard
-                dispatch({ type: 'RESET_STATE' });
+                 // Not connected, go to wizard
+                if (!state.tagName) { // only reset if no name was passed from landing
+                    dispatch({ type: 'RESET_STATE' });
+                }
                 setAppStatus('wizard');
             }
         };
 
-        checkForExistingId();
-    }, [isConnected, walletAddress, dispatch]);
+        if (appStatus === 'initializing') {
+            checkForExistingId();
+        }
+    }, [isConnected, walletAddress, dispatch, appStatus, state.tagName]);
 
     // This effect handles the transition from wizard to explorer upon successful minting
     useEffect(() => {
@@ -94,21 +126,47 @@ const AppContent: React.FC = () => {
         }
     }, [state.mintStatus, appStatus]);
 
+    const handleLaunchApp = (name?: string) => {
+        if (name) {
+            const fullName = name.trim().endsWith('.tag') ? name.trim() : `${name.trim()}.tag`;
+            dispatch({ type: 'SET_TAG_NAME', payload: fullName });
+        }
+        try {
+            localStorage.setItem('hasVisitedTagApp', 'true');
+        } catch (e) {
+            console.error('Could not write to localStorage', e);
+        }
+        setAppStatus('initializing');
+    };
+
+    const goToLanding = () => {
+        dispatch({ type: 'RESET_STATE' });
+        setAppStatus('landing');
+    };
+
+    if (appStatus === 'landing') {
+        return <LandingPage onLaunch={handleLaunchApp} />;
+    }
 
     if (appStatus === 'initializing') {
         return <LoadingScreen />;
     }
 
-    if (appStatus === 'explorer') {
-        return (
-            <div className="h-full w-full selection:bg-green-500/30">
-                <ToastContainer />
-                <TagIdExplorer />
-            </div>
-        );
-    }
+    const mainContent = appStatus === 'explorer' ? (
+        <div className="relative h-full w-full selection:bg-green-500/30">
+            <BackgroundTags />
+            <ToastContainer />
+            <TagIdExplorer />
+        </div>
+    ) : (
+        <Wizard onLogoClick={goToLanding} />
+    );
 
-    return <Wizard />;
+    return (
+        <div className="relative h-full w-full">
+            {mainContent}
+        </div>
+    );
 };
 
 const App: React.FC = () => {

@@ -24,18 +24,19 @@
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
       
-      html, body, #root {
+      html, #root {
         height: 100%;
-        overflow: hidden;
       }
 
       body {
+        height: 100%;
         font-family: 'Inter', sans-serif;
         background-color: #000000; /* Solid black background */
         background-image: 
           radial-gradient(circle at 1px 1px, rgba(0, 255, 0, 0.1) 1px, transparent 0);
         background-size: 25px 25px;
         position: relative;
+        overflow-x: hidden; /* Prevent horizontal scroll */
       }
 
       /* Add a background glow overlay */
@@ -72,6 +73,16 @@
       
       .animate-fade-in {
         animation: fade-in 0.4s ease-out forwards;
+      }
+
+      @keyframes float {
+        0% { transform: translateY(0px) translateX(0px); }
+        50% { transform: translateY(-20px) translateX(10px); }
+        100% { transform: translateY(0px) translateX(0px); }
+      }
+
+      .animate-float {
+          animation-name: float;
       }
     </style>
   <script type="importmap">
