@@ -1,0 +1,7 @@
+{
+  "name": "TAG",
+  "description": "A step-by-step wizard to register, verify, and mint a unique TAG ID (Soulbound NFT) on the Base Testnet, demonstrating a decentralized identity creation flow.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
