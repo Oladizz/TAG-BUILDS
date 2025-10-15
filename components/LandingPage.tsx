@@ -72,13 +72,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
                     <div className="inline-flex items-center space-x-2 text-sm font-medium mb-4">
                         <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
                         <span className="font-bold text-white">TAG ID</span>
-                        <span className="text-gray-400">Your Universal Web3 Username</span>
+                        <span className="text-gray-400">Your immutable Digital identity</span>
                     </div>
                     <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
                         Your Digital Identity, Reimagined.
                     </h1>
                     <p className="max-w-2xl mx-auto mt-6 text-lg text-gray-400">
-                        Mint a unique `.tag` to build your reputation, simplify transactions, and connect across the Base ecosystem.
+                        Mint a unique .tag to build reputations,create and connect.
                     </p>
                     <div className="mt-10">
                          <div className="flex items-center w-full max-w-lg mx-auto bg-white/5 border border-white/10 rounded-full shadow-lg shadow-green-500/10 focus-within:ring-2 focus-within:ring-green-500/50 transition-all p-2">
@@ -91,7 +91,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
                                 className="w-full text-lg font-medium tracking-wider bg-transparent py-2 px-6 text-white placeholder-gray-500 focus:outline-none"
                             />
                             <span className="text-lg font-medium text-gray-500 pr-4">.tag</span>
-                            <Button onClick={handleStart} disabled={!name}>
+                            <Button onClick={handleStart} disabled={!name} className="py-2.5 px-4 sm:px-6 text-sm sm:text-base whitespace-nowrap">
                                 Claim My .tag
                             </Button>
                         </div>

@@ -72,18 +72,7 @@ const AppContent: React.FC = () => {
     const { state, dispatch } = useTagId();
     const { walletAddress, isConnected } = useWallet();
     
-    const getInitialStatus = (): 'landing' | 'initializing' => {
-        try {
-            if (localStorage.getItem('hasVisitedTagApp') === 'true') {
-                return 'initializing';
-            }
-        } catch (e) {
-            console.error('Could not access localStorage', e);
-        }
-        return 'landing';
-    };
-
-    const [appStatus, setAppStatus] = useState<'landing' | 'initializing' | 'wizard' | 'explorer'>(getInitialStatus);
+    const [appStatus, setAppStatus] = useState<'landing' | 'initializing' | 'wizard' | 'explorer'>('landing');
 
     useEffect(() => {
         const checkForExistingId = async () => {
@@ -130,11 +119,6 @@ const AppContent: React.FC = () => {
         if (name) {
             const fullName = name.trim().endsWith('.tag') ? name.trim() : `${name.trim()}.tag`;
             dispatch({ type: 'SET_TAG_NAME', payload: fullName });
-        }
-        try {
-            localStorage.setItem('hasVisitedTagApp', 'true');
-        } catch (e) {
-            console.error('Could not write to localStorage', e);
         }
         setAppStatus('initializing');
     };

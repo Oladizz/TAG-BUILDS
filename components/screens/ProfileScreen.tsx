@@ -219,7 +219,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
                 {state.socials.map((social) => (
                     <div key={social.id} className="flex items-center space-x-2">
                         <Input 
-                            label="https://twitter.com/username" 
+                            label="Enter profile URL" 
                             name="social" 
                             value={social.url} 
                             onChange={(e) => handleUpdateSocial(social.id, e.target.value)} 

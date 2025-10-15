@@ -1,7 +1,8 @@
 import React from 'react';
 
 const NEW_IMAGES = [
-    'https://i.postimg.cc/CLgR5Hzz/IMG-20251014-112338-315.jpg',
+    'https://i.postimg.cc/G3P8nrDd/IMG-20251015-001839-704.jpg',
+    'https://i.postimg.cc/wx5yYHNx/IMG-20251015-001843-944.jpg',
     'https://i.postimg.cc/bJFk5n4X/file-000000003f1061f4a064a5b643579a72.png',
     'https://i.postimg.cc/T24cJsQ1/Laurel-20250605-173322-0001.png',
     'https://i.postimg.cc/02r0sRFx/file-00000000eb2861f68b0dd85470002012-conversation-id-68112840-f334-8011-93b0-4fd58407ac10-amp-message-i.png',
@@ -14,34 +15,34 @@ const BACKGROUND_PROFILES = [
     },
     {
         name: 'zencephalon.tag',
-        imageUrl: NEW_IMAGES[1],
+        imageUrl: NEW_IMAGES[2],
     },
     {
         name: 'kyra.tag',
-        imageUrl: NEW_IMAGES[2],
-    },
-    {
-        name: 'aflock.tag',
         imageUrl: NEW_IMAGES[3],
     },
     {
-        name: 'vitalik.tag',
-        imageUrl: NEW_IMAGES[0],
+        name: 'aflock.tag',
+        imageUrl: NEW_IMAGES[4],
     },
     {
-        name: 'degen.tag',
+        name: 'vitalik.tag',
         imageUrl: NEW_IMAGES[1],
     },
     {
-        name: 'base.tag',
+        name: 'degen.tag',
         imageUrl: NEW_IMAGES[2],
+    },
+    {
+        name: 'base.tag',
+        imageUrl: NEW_IMAGES[3],
     }
 ];
 
 const FOREGROUND_PROFILES = [
-    { name: 'builder.tag', imageUrl: NEW_IMAGES[1] },
-    { name: 'onchain.tag', imageUrl: NEW_IMAGES[2] },
-    { name: 'dev.tag', imageUrl: NEW_IMAGES[3] },
+    { name: 'builder.tag', imageUrl: NEW_IMAGES[2] },
+    { name: 'onchain.tag', imageUrl: NEW_IMAGES[3] },
+    { name: 'dev.tag', imageUrl: NEW_IMAGES[4] },
     { name: 'artist.tag', imageUrl: NEW_IMAGES[0] },
 ];
 
