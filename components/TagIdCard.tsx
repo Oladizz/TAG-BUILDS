@@ -13,6 +13,17 @@ const TagIdCard: React.FC<TagIdCardProps> = ({ state, isGlassmorphism = false })
         ? 'bg-black/20 backdrop-blur-2xl border border-white/10 shadow-xl shadow-green-500/20'
         : 'bg-gray-900/80 border border-gray-700 shadow-lg shadow-green-500/10';
 
+    const getTagNameFontSize = (name: string): string => {
+        const nameLength = name.length;
+        if (nameLength <= 10) return 'text-3xl';
+        if (nameLength <= 15) return 'text-2xl';
+        if (nameLength <= 20) return 'text-xl';
+        if (nameLength <= 25) return 'text-lg';
+        return 'text-base';
+    };
+
+    const tagNameFontSize = getTagNameFontSize(state.tagName || 'your.tag');
+
     return (
         <div
             className={`w-full max-w-sm mx-auto rounded-3xl p-6 shadow-2xl transition-all duration-300 relative overflow-hidden ${cardClasses}`}
@@ -27,7 +38,7 @@ const TagIdCard: React.FC<TagIdCardProps> = ({ state, isGlassmorphism = false })
                         <TagIcon className="w-8 h-8 text-green-300 mt-1 flex-shrink-0" />
                         <div className="bg-clip-text text-transparent bg-gradient-to-br from-green-300 to-green-200 min-w-0">
                             <p className="text-sm font-semibold tracking-wider uppercase">TAG ID</p>
-                            <h2 className="text-3xl font-bold tracking-tight truncate">{state.tagName || 'your.tag'}</h2>
+                            <h2 className={`${tagNameFontSize} font-bold tracking-tight break-all`}>{state.tagName || 'your.tag'}</h2>
                         </div>
                     </div>
                     <div data-pfp className="w-20 h-20 rounded-full bg-gray-800 border-2 border-white/20 overflow-hidden shadow-lg flex-shrink-0 ml-4 transition-transform duration-200 ease-out">

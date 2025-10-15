@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { IdentityIcon, SimplifyIcon, ConnectIcon } from './icons/FeatureIcons';
 import AccordionItem from './ui/AccordionItem';
 import { TagIcon } from './icons/TagIcon';
@@ -43,18 +43,55 @@ const FAQ_DATA = [
     }
 ];
 
+// Custom hook to trigger animations on scroll
+const useAnimateOnScroll = (options?: IntersectionObserverInit) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const ref = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting) {
+                setIsVisible(true);
+                if (ref.current) {
+                    observer.unobserve(ref.current);
+                }
+            }
+        }, {
+            threshold: 0.1,
+            ...options
+        });
+
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
+
+        return () => {
+            if (ref.current) {
+                // eslint-disable-next-line react-hooks/exhaustive-deps
+                observer.unobserve(ref.current);
+            }
+        };
+    }, [options]);
+
+    return [ref, isVisible] as const;
+};
 
 const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
     const [name, setName] = useState('');
+
+    const [heroRef, isHeroVisible] = useAnimateOnScroll();
+    const [featuresRef, isFeaturesVisible] = useAnimateOnScroll();
+    const [faqRef, isFaqVisible] = useAnimateOnScroll();
+    const [footerRef, isFooterVisible] = useAnimateOnScroll();
 
     const handleStart = () => {
         onLaunch(name);
     };
 
     return (
-        <div className="h-full w-full bg-black text-gray-300 overflow-y-auto custom-scrollbar selection:bg-green-500/30 animate-fade-in">
+        <div className="h-full w-full bg-black text-gray-300 overflow-y-auto custom-scrollbar selection:bg-green-500/30">
             {/* Header */}
-            <header className="sticky top-0 z-30 px-4 sm:px-6 lg:px-8 py-3 bg-black/70 backdrop-blur-lg border-b border-white/10">
+            <header className="sticky top-0 z-30 px-4 sm:px-6 lg:px-8 py-3 bg-black/70 backdrop-blur-lg border-b border-white/10 animate-fade-in">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
                     <div className="flex items-center space-x-3">
                          <TagIcon className="w-8 h-8 rounded-md" />
@@ -67,7 +104,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
             </header>
 
             {/* Hero Section */}
-            <main className="relative isolate overflow-hidden">
+            <main ref={heroRef} className={`relative isolate overflow-hidden transition-opacity duration-700 ${isHeroVisible ? 'animate-fade-in-down' : 'opacity-0'}`}>
                 <div className="relative z-10 max-w-4xl mx-auto text-center py-24 sm:py-32 px-4">
                     <div className="inline-flex items-center space-x-2 text-sm font-medium mb-4">
                         <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
@@ -100,7 +137,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
             </main>
 
             {/* Features Section */}
-            <section className="py-16 sm:py-24 bg-black/20 border-y border-white/5">
+            <section ref={featuresRef} className={`py-16 sm:py-24 bg-black/20 border-y border-white/5 transition-opacity duration-700 ${isFeaturesVisible ? 'animate-fade-in-left' : 'opacity-0'}`}>
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
@@ -137,7 +174,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
             </section>
 
             {/* FAQ Section */}
-            <section className="py-16 sm:py-24">
+            <section ref={faqRef} className={`py-16 sm:py-24 transition-opacity duration-700 ${isFaqVisible ? 'animate-fade-in-right' : 'opacity-0'}`}>
                 <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
                         <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
@@ -158,7 +195,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
             </section>
             
             {/* Footer */}
-            <footer className="py-8 border-t border-white/10">
+            <footer ref={footerRef} className={`py-8 border-t border-white/10 transition-opacity duration-700 ${isFooterVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-500">
                     <p>&copy; {new Date().getFullYear()} TAG Protocol. All Rights Reserved.</p>
                 </div>

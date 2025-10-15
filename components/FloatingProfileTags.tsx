@@ -26,8 +26,8 @@ const BACKGROUND_PROFILES = [
         imageUrl: NEW_IMAGES[4],
     },
     {
-        name: 'vitalik.tag',
-        imageUrl: NEW_IMAGES[1],
+        name: 'dev.tag',
+        imageUrl: NEW_IMAGES[4],
     },
     {
         name: 'degen.tag',
@@ -42,7 +42,7 @@ const BACKGROUND_PROFILES = [
 const FOREGROUND_PROFILES = [
     { name: 'builder.tag', imageUrl: NEW_IMAGES[2] },
     { name: 'onchain.tag', imageUrl: NEW_IMAGES[3] },
-    { name: 'dev.tag', imageUrl: NEW_IMAGES[4] },
+    { name: 'vitalik.tag', imageUrl: NEW_IMAGES[1] },
     { name: 'artist.tag', imageUrl: NEW_IMAGES[0] },
 ];
 
@@ -59,7 +59,7 @@ const generateStyledData = (profiles: typeof BACKGROUND_PROFILES, variant: 'back
                 animationDirection: index % 2 === 0 ? 'alternate' : 'alternate-reverse',
             },
             innerStyle: {
-                filter: `blur(${isBackground ? 1.5 + Math.random() * 2 : 0.5 + Math.random() * 1}px)`,
+                filter: `blur(${isBackground ? 0.8 + Math.random() * 1.2 : 0 + Math.random() * 0.5}px)`,
                 opacity: isBackground ? 0.3 + Math.random() * 0.3 : 0.5 + Math.random() * 0.4,
                 transform: `scale(${isBackground ? 0.9 + Math.random() * 0.3 : 0.95 + Math.random() * 0.25})`,
             }
@@ -80,13 +80,19 @@ const FloatingProfileTags: React.FC<FloatingProfileTagsProps> = ({ variant = 'ba
     return (
         <div className="absolute inset-0 w-full h-full overflow-hidden" aria-hidden="true">
             {dataToRender.map(({ name, imageUrl, positionStyle, innerStyle }, index) => (
-                <div key={`${name}-${index}`} className="absolute animate-float" style={{ ...positionStyle, animationIterationCount: 'infinite', animationTimingFunction: 'ease-in-out' }}>
+                <div key={`${name}-${index}`} className="absolute animate-float group" style={{ ...positionStyle, animationIterationCount: 'infinite', animationTimingFunction: 'ease-in-out' }}>
                     <div
-                        className="flex items-center space-x-2 whitespace-nowrap text-sm font-medium text-gray-400 bg-white/5 backdrop-blur-sm rounded-full pl-1.5 pr-4 py-1.5 border border-white/10"
+                        className="flex items-center space-x-2 whitespace-nowrap text-sm font-medium text-gray-400 bg-white/5 backdrop-blur-sm rounded-full pl-1.5 pr-4 py-1.5 border border-white/10 transition-all duration-300 ease-in-out group-hover:scale-110 group-hover:!blur-none group-hover:!opacity-100 group-hover:shadow-2xl group-hover:shadow-green-500/30 group-hover:z-20"
                         style={innerStyle}
                     >
                         <div className="w-8 h-8 rounded-full overflow-hidden shrink-0">
-                            <img src={imageUrl} alt={name} className="w-full h-full object-cover" />
+                            <img 
+                                src={imageUrl} 
+                                alt={name} 
+                                className="w-full h-full object-cover" 
+                                loading="lazy"
+                                decoding="async"
+                            />
                         </div>
                         <span>{name}</span>
                     </div>
