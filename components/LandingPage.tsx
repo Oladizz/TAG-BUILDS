@@ -81,6 +81,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
 
     const [heroRef, isHeroVisible] = useAnimateOnScroll();
     const [featuresRef, isFeaturesVisible] = useAnimateOnScroll();
+    const [decentralizedRef, isDecentralizedVisible] = useAnimateOnScroll();
     const [faqRef, isFaqVisible] = useAnimateOnScroll();
     const [footerRef, isFooterVisible] = useAnimateOnScroll();
 
@@ -168,6 +169,35 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
                             </div>
                             <h3 className="mt-6 text-xl font-bold text-white">Connect and collaborate</h3>
                             <p className="mt-2 text-gray-400">Find and interact with builders, creators, and communities across ecosystems through verified TAG IDs.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Decentralized Section */}
+            <section ref={decentralizedRef} className={`py-16 sm:py-24 transition-opacity duration-700 ${isDecentralizedVisible ? 'animate-fade-in-up' : 'opacity-0'}`}>
+                <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <h2 className="text-4xl sm:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
+                        Decentralized and verifiable
+                    </h2>
+                    <p className="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
+                        Tag IDs are built on the decentralized TAG protocol, enabling secure, verifiable identities providing ownership of digital identity and trust ready verification via ID explorer.
+                    </p>
+
+                    <div className="relative h-80 flex items-center justify-center mt-12">
+                        {/* Decorative floating circles */}
+                        <div className="absolute w-12 h-12 bg-green-500/20 rounded-full animate-float blur-sm" style={{ top: '10%', left: '20%', animationDuration: '8s', animationDelay: '0.5s' }}></div>
+                        <div className="absolute w-8 h-8 bg-blue-500/20 rounded-full animate-float" style={{ top: '25%', left: '80%', animationDuration: '12s', animationDelay: '1s' }}></div>
+                        <div className="absolute w-16 h-16 bg-gray-400/20 rounded-full animate-float blur-sm" style={{ top: '70%', left: '10%', animationDuration: '10s', animationDelay: '2s' }}></div>
+                        <div className="absolute w-10 h-10 bg-pink-400/20 rounded-full animate-float" style={{ bottom: '15%', right: '15%', animationDuration: '9s', animationDelay: '1.5s' }}></div>
+                        <div className="absolute w-20 h-20 bg-blue-400/20 rounded-full animate-float blur-md" style={{ bottom: '20%', left: '30%', animationDuration: '15s', animationDelay: '3s' }}></div>
+            
+                        {/* Main floating logo */}
+                        <div className="relative w-40 h-40 sm:w-48 sm:h-48 animate-float" style={{ animationDuration: '7s' }}>
+                            <div className="absolute inset-0 bg-gradient-to-br from-green-400/50 to-blue-500/50 rounded-full blur-2xl"></div>
+                            <div className="relative w-full h-full p-2 bg-black/30 rounded-full backdrop-blur-sm border border-white/10 shadow-2xl shadow-green-500/20">
+                                <TagIcon className="w-full h-full object-cover rounded-full" />
+                            </div>
                         </div>
                     </div>
                 </div>
