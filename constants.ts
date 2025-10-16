@@ -12,7 +12,13 @@ export const NAV_ITEMS = [
         id: 'verify',
         title: 'Verify',
         icon: ShieldCheckIcon,
-        isComplete: (state: TagIdState) => state.isHuman && state.fingerprintVerified,
+        isComplete: (state: TagIdState) => 
+            state.isHuman && 
+            state.fingerprintVerified &&
+            !!state.legalInfo.name &&
+            !!state.legalInfo.idCategory &&
+            !!state.legalInfo.idNumber &&
+            !!state.legalInfo.dob,
     },
     {
         id: 'profile',

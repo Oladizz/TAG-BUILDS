@@ -1,6 +1,8 @@
 
 export interface LegalInfo {
     name: string;
+    idCategory: string;
+    idNumber: string;
     dob: string;
     nationality: string;
 }
@@ -19,7 +21,9 @@ export interface TagIdState {
     legalInfo: LegalInfo;
     fingerprintVerified: boolean;
     socials: SocialLink[];
-    pfp: string; // Will store a data URL or a mock URL
+    pfp: string;
+    bio: string;
+    skills: string[];
     isProfileSaved: boolean;
     mintStatus: MintStatus;
     tokenURI: string;
@@ -33,6 +37,8 @@ export type Action =
     | { type: 'SET_FINGERPRINT_VERIFIED'; payload: boolean }
     | { type: 'SET_SOCIALS'; payload: SocialLink[] }
     | { type: 'SET_PFP'; payload: string }
+    | { type: 'SET_BIO'; payload: string }
+    | { type: 'SET_SKILLS'; payload: string[] }
     | { type: 'SET_PROFILE_SAVED'; payload: boolean }
     | { type: 'SET_MINT_STATUS'; payload: MintStatus }
     | { type: 'SET_TOKEN_URI'; payload: string }

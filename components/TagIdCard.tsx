@@ -52,17 +52,20 @@ const TagIdCard: React.FC<TagIdCardProps> = ({ state, isGlassmorphism = false })
                     </div>
                 </div>
 
-                <div className="mt-8 space-y-3 text-sm text-gray-300">
-                    <div className="flex justify-between">
-                        <span className="font-semibold text-gray-400">Name</span>
-                        <span className="font-medium text-white">{state.legalInfo.name || 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                        <span className="font-semibold text-gray-400">Nationality</span>
-                        <span className="font-medium text-white">{state.legalInfo.nationality || 'N/A'}</span>
-                    </div>
-                </div>
+                {state.bio && (
+                    <p className="mt-6 text-sm text-gray-300 leading-snug">{state.bio}</p>
+                )}
                 
+                {state.skills && state.skills.length > 0 && (
+                     <div className="mt-4 flex flex-wrap gap-2">
+                        {state.skills.map(skill => (
+                            <span key={skill} className="px-2.5 py-1 text-xs font-semibold text-green-200 bg-green-500/20 rounded-full">
+                                {skill}
+                            </span>
+                        ))}
+                    </div>
+                )}
+
                 <div className="mt-6 flex items-center space-x-3">
                     {state.socials.filter(s => s.url && detectPlatform(s.url) !== 'unknown').map(social => {
                         const platform = detectPlatform(social.url);

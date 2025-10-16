@@ -6,10 +6,12 @@ const initialState: TagIdState = {
     tagName: "",
     isAvailable: null,
     isHuman: false,
-    legalInfo: { name: "", dob: "", nationality: "" },
+    legalInfo: { name: "", idCategory: "", idNumber: "", dob: "", nationality: "" },
     fingerprintVerified: false,
     socials: [],
     pfp: "",
+    bio: "",
+    skills: [],
     isProfileSaved: false,
     mintStatus: "idle",
     tokenURI: "",
@@ -40,6 +42,10 @@ const tagIdReducer = (state: TagIdState, action: Action): TagIdState => {
             return { ...state, socials: action.payload, isProfileSaved: false };
         case 'SET_PFP':
             return { ...state, pfp: action.payload, isProfileSaved: false };
+        case 'SET_BIO':
+            return { ...state, bio: action.payload, isProfileSaved: false };
+        case 'SET_SKILLS':
+            return { ...state, skills: action.payload, isProfileSaved: false };
         case 'SET_PROFILE_SAVED':
             return { ...state, isProfileSaved: action.payload };
         case 'SET_MINT_STATUS':

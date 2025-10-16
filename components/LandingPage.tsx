@@ -11,11 +11,11 @@ interface LandingPageProps {
 const FAQ_DATA = [
     {
         question: 'What is a TAG ID?',
-        answer: 'A TAG ID is your immutable digital identity—a unique, non-transferable onchain identity that verifies your humanity, reputation, and traits while keeping your privacy intact. It’s created through a simple registration and verification flow (voice, fingerprint, and profile setup) and minted directly to your wallet. Once minted, your TAG ID becomes your universal Web3 identity, recognized across integrated platforms, quests, and partner ecosystems.'
+        answer: 'A TAG ID is your immutable digital identity, a unique, non-transferable onchain identity that verifies your humanity, reputation, and traits while keeping your privacy intact. It’s created through a simple registration and verification flow (voice, fingerprint, and profile setup) and minted directly to your wallet. Once minted, your TAG ID becomes your universal Web3 identity, recognized across integrated platforms, quests, and partner ecosystems.'
     },
     {
         question: 'What are the TAG ID registration fees?',
-        answer: 'TAG ID registration fees depend on the length and uniqueness of your .tag name—the shorter its value, the higher the cost. Short names (e.g., yra.tag) are rare and more desirable. During the testnet phase, registration is free; fees will only apply on the mainnet.'
+        answer: 'TAG ID registration fees depend on the length and uniqueness of your .tag name, the shorter its value, the higher the cost. Short names (e.g., yra.tag) are rare and more desirable. During the testnet phase, registration is free; fees will only apply on the mainnet.'
     },
     {
         question: 'How do I get a free or discounted TAG ID?',
@@ -122,15 +122,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
                          <div className="flex items-center w-full max-w-lg mx-auto bg-white/5 border border-white/10 rounded-full shadow-lg shadow-green-500/10 focus-within:ring-2 focus-within:ring-green-500/50 transition-all p-2">
                             <input
                                 type="text"
-                                placeholder="your-name"
+                                placeholder="your name"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleStart()}
                                 className="w-full text-lg font-medium tracking-wider bg-transparent py-2 px-6 text-white placeholder-gray-500 focus:outline-none"
                             />
-                            <span className="text-lg font-medium text-gray-500 pr-4">.tag</span>
-                            <Button onClick={handleStart} disabled={!name} className="py-2.5 px-4 sm:px-6 text-sm sm:text-base whitespace-nowrap">
-                                Claim My .tag
+                            <Button onClick={handleStart} disabled={!name} className="py-2.5 px-6 text-lg font-medium whitespace-nowrap">
+                                .tag
                             </Button>
                         </div>
                     </div>

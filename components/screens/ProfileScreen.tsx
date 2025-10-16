@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useTagId } from '../../context/TagIdContext';
 import { useWallet } from '../../context/WalletContext';
 import { Input } from '../ui/Input';
@@ -6,25 +6,8 @@ import { detectPlatform, getPlatformIcon } from '../icons/SocialIcons';
 import type { Tab } from '../App';
 import { Button } from '../ui/Button';
 import { useToast } from '../../context/ToastContext';
-import { getGeolocationInfo } from '../../services/mockApi';
 import { saveUserProfile } from '../../services/backendApi';
 
-const WalletIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9M3 12V9m18 3a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 12m15-3a3 3 0 1 1-6 0m6 0a3 3 0 1 1-6 0" />
-    </svg>
-);
-const ClipboardIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a2.25 2.25 0 0 1-2.25 2.25h-1.5a2.25 2.25 0 0 1-2.25-2.25v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.218V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.342c0-1.141.806-2.09 1.907-2.218a48.208 48.208 0 0 1 1.927-.184" />
-    </svg>
-);
-const ClipboardCheckIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a2.25 2.25 0 0 1-2.25 2.25h-1.5a2.25 2.25 0 0 1-2.25-2.25v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.218V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.342c0-1.141.806-2.09 1.907-2.218a48.208 48.208 0 0 1 1.927-.184" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="m9 12.75 3 3 3-3M9 15.75s-3-3-3-3" />
-    </svg>
-);
 
 const CameraIcon = (props: React.SVGProps<SVGSVGElement>) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
@@ -33,11 +16,38 @@ const CameraIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
-const LockClosedIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
-      <path fillRule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clipRule="evenodd" />
-    </svg>
-);
+
+const Textarea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement> & { label: string }> = ({ label, ...props }) => {
+    const id = React.useId();
+    const labelBgColor = '#000000';
+
+    return (
+        <div className="relative group">
+            <textarea
+                id={id}
+                className={`peer w-full bg-black/20 border-2 rounded-lg py-3 px-4 text-white placeholder-transparent focus:outline-none transition-all duration-300 min-h-[100px] border-white/10 shadow-sm shadow-green-500/5 focus:border-green-500 focus:ring-2 focus:ring-green-500/30 focus:shadow-lg focus:shadow-green-500/20`}
+                placeholder={label}
+                {...props}
+            />
+            <label
+                htmlFor={id}
+                className={`absolute left-4 -top-2.5 text-xs px-1 transition-all
+                           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500
+                           peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-green-400`}
+                style={{ backgroundColor: labelBgColor }}
+            >
+                {label}
+            </label>
+        </div>
+    );
+};
+
+const SKILL_TAGS = [
+    "Developer", "Designer", "Artist", "Community Manager",
+    "Trader", "Writer", "Founder", "Memelord",
+    "Onchain Analyst", "Gamer", "Builder", "Creator"
+];
+
 
 interface ProfileScreenProps {
     setActiveTab: (tab: Tab) => void;
@@ -45,39 +55,10 @@ interface ProfileScreenProps {
 
 const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
     const { state, dispatch } = useTagId();
-    const { isConnected, walletAddress } = useWallet();
+    const { walletAddress } = useWallet();
     const { showToast, hideToast } = useToast();
-    const [copied, setCopied] = useState(false);
-    const [isFetchingNationality, setIsFetchingNationality] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
-    useEffect(() => {
-        const fetchNationality = async () => {
-            if (!state.legalInfo.nationality) {
-                setIsFetchingNationality(true);
-                try {
-                    const data = await getGeolocationInfo();
-                    dispatch({ type: 'SET_LEGAL_INFO', payload: { nationality: data.nationality } });
-                } catch (error) {
-                    console.error("Failed to fetch nationality", error);
-                    showToast({ message: 'Could not auto-detect nationality.', type: 'error' });
-                } finally {
-                    setIsFetchingNationality(false);
-                }
-            }
-        };
-
-        fetchNationality();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Run only once on mount
-
-    const handleLegalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch({
-            type: 'SET_LEGAL_INFO',
-            payload: { [e.target.name]: e.target.value }
-        });
-    };
-    
     const handleAddSocial = () => {
         if (state.socials.length < 7) {
             const newSocials = [...state.socials, { id: crypto.randomUUID(), url: '' }];
@@ -107,15 +88,6 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
         }
     };
 
-    const handleCopyAddress = () => {
-        if (walletAddress) {
-            navigator.clipboard.writeText(walletAddress);
-            setCopied(true);
-            showToast({ message: 'Address copied!', type: 'success', duration: 1500 });
-            setTimeout(() => setCopied(false), 2000);
-        }
-    };
-
     const handleSaveProfile = async () => {
         if (!walletAddress) {
             showToast({ message: 'Please connect your wallet to save.', type: 'error' });
@@ -140,7 +112,19 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
         }
     };
     
-    const isProfileDataComplete = !!state.legalInfo.name && !!state.legalInfo.dob && !!state.legalInfo.nationality;
+    const handleToggleSkill = (skill: string) => {
+        const newSkills = state.skills.includes(skill)
+            ? state.skills.filter(s => s !== skill)
+            : [...state.skills, skill];
+        
+        if (newSkills.length <= 4) {
+            dispatch({ type: 'SET_SKILLS', payload: newSkills });
+        } else {
+            showToast({ message: 'You can select up to 4 skills.', type: 'info', duration: 2000 });
+        }
+    };
+    
+    const isProfileDataComplete = !!state.pfp;
 
     return (
         <div className="flex flex-col space-y-8">
@@ -168,45 +152,41 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
                 <p className="text-xs text-gray-500 pt-1">Upload a profile picture</p>
             </div>
             
-            {isConnected && walletAddress && (
-                <div className="space-y-2">
-                    <h3 className="font-semibold text-gray-300">Connected Wallet</h3>
-                    <div className="relative group">
-                        <div className="flex items-center w-full bg-black/20 border-2 border-white/10 rounded-lg py-3 text-white focus:outline-none transition-all duration-300 pl-10 pr-4">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                                <WalletIcon className="w-5 h-5" />
-                            </div>
-                            <span className="truncate">{walletAddress}</span>
-                        </div>
-                        <button onClick={handleCopyAddress} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-green-400 transition-colors rounded-md hover:bg-white/10">
-                            {copied ? <ClipboardCheckIcon className="w-5 h-5 text-green-400"/> : <ClipboardIcon className="w-5 h-5"/>}
-                        </button>
-                    </div>
-                </div>
-            )}
-            
             <div className="space-y-4">
-                 <h3 className="font-semibold text-gray-300">Legal Details</h3>
-                <Input label="Full Name" name="name" value={state.legalInfo.name} onChange={handleLegalChange} />
-                <Input label="Date of Birth" name="dob" type="date" value={state.legalInfo.dob} onChange={handleLegalChange} />
-                 <div className="relative group">
-                    <Input
-                        label="Nationality"
-                        name="nationality"
-                        value={isFetchingNationality ? "Detecting..." : state.legalInfo.nationality}
-                        onChange={() => {}} // No-op as it's disabled
-                        disabled={true}
-                        icon={<LockClosedIcon className="w-5 h-5 text-gray-500" />}
-                    />
-                     <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 w-64 p-3 bg-gray-900 border border-white/10 rounded-lg text-xs text-center text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                        Your nationality is automatically detected to ensure authenticity and cannot be changed.
-                    </div>
+                <h3 className="font-semibold text-gray-300">Short Bio</h3>
+                <Textarea 
+                    label="Tell us about yourself... (max 150 chars)" 
+                    value={state.bio}
+                    onChange={(e) => dispatch({ type: 'SET_BIO', payload: e.target.value })}
+                    maxLength={150}
+                />
+            </div>
+
+             <div className="space-y-4">
+                <h3 className="font-semibold text-gray-300">Skills & Interests (up to 4)</h3>
+                <div className="flex flex-wrap gap-2">
+                    {SKILL_TAGS.map(skill => {
+                        const isSelected = state.skills.includes(skill);
+                        return (
+                            <button
+                                key={skill}
+                                onClick={() => handleToggleSkill(skill)}
+                                className={`px-4 py-2 text-sm font-medium rounded-full border-2 transition-all duration-200 ${
+                                    isSelected 
+                                    ? 'bg-green-500/20 border-green-400 text-green-300 shadow-md shadow-green-500/10' 
+                                    : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:border-white/20'
+                                }`}
+                            >
+                                {skill}
+                            </button>
+                        )
+                    })}
                 </div>
             </div>
 
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                    <h3 className="font-semibold text-gray-300">Social Links (up to 7)</h3>
+                    <h3 className="font-semibold text-gray-300">Social Links</h3>
                     <Button 
                         variant="secondary" 
                         onClick={handleAddSocial} 
@@ -216,6 +196,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
                         Add
                     </Button>
                 </div>
+                 <p className="text-xs text-gray-500 -mt-3">Link your Twitter/X, Telegram, or Github.</p>
                 {state.socials.map((social) => (
                     <div key={social.id} className="flex items-center space-x-2">
                         <Input 
