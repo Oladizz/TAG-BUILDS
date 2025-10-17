@@ -43,9 +43,12 @@ const Textarea: React.FC<React.TextareaHTMLAttributes<HTMLTextAreaElement> & { l
 };
 
 const SKILL_TAGS = [
-    "Developer", "Designer", "Artist", "Community Manager",
-    "Trader", "Writer", "Founder", "Memelord",
-    "Onchain Analyst", "Gamer", "Builder", "Creator"
+    "Developer", "Designer", "Writer", "Editor", "Researcher", "Analyst",
+    "Product Manager", "Marketer", "Community Manager", "Strategist", "Founder",
+    "Investor", "Fullstack developer", "Blockchain dev", "Smart Contracts dev",
+    "Solidity development", "Web3 Enthustiast", "Data Science", "UI/UX",
+    "DevOps", "Artist", "Illustrator", "Photographer", "Videographer",
+    "Animator", "Content Creator", "Meme Maker", "Copywriter", "Motion Designer"
 ];
 
 
@@ -58,6 +61,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
     const { walletAddress } = useWallet();
     const { showToast, hideToast } = useToast();
     const [isSaving, setIsSaving] = useState(false);
+    const [showAllSkills, setShowAllSkills] = useState(false);
 
     const handleAddSocial = () => {
         if (state.socials.length < 7) {
@@ -165,7 +169,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
              <div className="space-y-4">
                 <h3 className="font-semibold text-gray-300">Skills & Interests (up to 4)</h3>
                 <div className="flex flex-wrap gap-2">
-                    {SKILL_TAGS.map(skill => {
+                    {(showAllSkills ? SKILL_TAGS : SKILL_TAGS.slice(0, 4)).map(skill => {
                         const isSelected = state.skills.includes(skill);
                         return (
                             <button
@@ -182,6 +186,17 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
                         )
                     })}
                 </div>
+                {SKILL_TAGS.length > 4 && (
+                    <div className="mt-4 flex justify-center">
+                         <Button 
+                            variant="secondary" 
+                            size="small" 
+                            onClick={() => setShowAllSkills(!showAllSkills)}
+                        >
+                            {showAllSkills ? 'View Less' : `View All ${SKILL_TAGS.length} Skills`}
+                        </Button>
+                    </div>
+                )}
             </div>
 
             <div className="space-y-4">
@@ -196,7 +211,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ setActiveTab }) => {
                         Add
                     </Button>
                 </div>
-                 <p className="text-xs text-gray-500 -mt-3">Link your Twitter/X, Telegram, or Github.</p>
+                 <p className="text-xs text-gray-500 -mt-3">Link your X (Twitter), Farcaster, GitHub, Telegram, or Discord.</p>
                 {state.socials.map((social) => (
                     <div key={social.id} className="flex items-center space-x-2">
                         <Input 

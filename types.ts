@@ -19,7 +19,6 @@ export interface TagIdState {
     isAvailable: boolean | null;
     isHuman: boolean;
     legalInfo: LegalInfo;
-    fingerprintVerified: boolean;
     socials: SocialLink[];
     pfp: string;
     bio: string;
@@ -34,7 +33,6 @@ export type Action =
     | { type: 'SET_AVAILABILITY'; payload: boolean | null }
     | { type: 'SET_IS_HUMAN'; payload: boolean }
     | { type: 'SET_LEGAL_INFO'; payload: Partial<LegalInfo> }
-    | { type: 'SET_FINGERPRINT_VERIFIED'; payload: boolean }
     | { type: 'SET_SOCIALS'; payload: SocialLink[] }
     | { type: 'SET_PFP'; payload: string }
     | { type: 'SET_BIO'; payload: string }

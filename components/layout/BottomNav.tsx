@@ -17,14 +17,15 @@ const BottomNav: React.FC<BottomNavProps> = ({ activeTab, setActiveTab }) => {
                 {NAV_ITEMS.map((item) => {
                     const isActive = activeTab === item.id;
                     const isComplete = item.isComplete(state);
-                    // FIX: The 'isDisabled' property was removed from NAV_ITEMS. All tabs are now always clickable.
+                    const isDisabled = item.isDisabled(state);
                     
                     return (
                         <button
                             key={item.id}
                             onClick={() => setActiveTab(item.id as Tab)}
+                            disabled={isDisabled}
                             className={`relative flex flex-col items-center justify-center w-20 h-16 rounded-lg transition-all duration-300 group focus:outline-none focus-visible:bg-white/10
-                                cursor-pointer hover:bg-white/5
+                                ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-white/5'}
                             `}
                         >
                             <div className="relative">

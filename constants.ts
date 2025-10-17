@@ -7,6 +7,7 @@ export const NAV_ITEMS = [
         title: 'ID',
         icon: IdCardIcon,
         isComplete: (state: TagIdState) => !!state.tagName && state.isAvailable === true,
+        isDisabled: (state: TagIdState) => false,
     },
     {
         id: 'verify',
@@ -14,24 +15,30 @@ export const NAV_ITEMS = [
         icon: ShieldCheckIcon,
         isComplete: (state: TagIdState) => 
             state.isHuman && 
-            state.fingerprintVerified &&
             !!state.legalInfo.name &&
             !!state.legalInfo.idCategory &&
             !!state.legalInfo.idNumber &&
             !!state.legalInfo.dob,
+        isDisabled: (state: TagIdState) => !(!!state.tagName && state.isAvailable === true),
     },
     {
         id: 'profile',
         title: 'Profile',
         icon: UserCircleIcon,
         isComplete: (state: TagIdState) => state.isProfileSaved,
+        isDisabled: (state: TagIdState) => !(
+            state.isHuman && 
+            !!state.legalInfo.name &&
+            !!state.legalInfo.idCategory &&
+            !!state.legalInfo.idNumber &&
+            !!state.legalInfo.dob
+        ),
     },
     {
         id: 'mint',
         title: 'Mint',
         icon: SparklesIcon,
         isComplete: (state: TagIdState) => state.mintStatus === 'success',
-        // The isDisabled property has been removed to make the Mint tab always clickable.
-        // The MintScreen component itself will handle disabling the final mint button if steps are incomplete.
+        isDisabled: (state: TagIdState) => !state.isProfileSaved,
     },
 ];

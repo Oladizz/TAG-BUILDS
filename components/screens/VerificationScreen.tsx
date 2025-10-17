@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTagId } from '../../context/TagIdContext';
 import type { Tab } from '../App';
-import { verifyBiometrics, getGeolocationInfo } from '../../services/mockApi';
+import { getGeolocationInfo } from '../../services/mockApi';
 import { useToast } from '../../context/ToastContext';
 import { Input } from '../ui/Input';
 
@@ -58,21 +58,14 @@ const MicIcon = (props: { className?: string }) => (
     <svg className={props.className || "w-8 h-8"} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
 );
 
-const FingerprintIcon = (props: { className?: string }) => (
-    <svg className={props.className || "w-8 h-8"} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 11c0 3.517-1.009 6.789-2.756 9.356-1.747 2.566-2.593 4.145-2.593 4.145H17.35c0 0-.846-1.579-2.593-4.145C13.009 17.789 12 14.517 12 11zM12 11c0-2.21.896-4.21 2.343-5.657C15.79 3.896 17.79 3 20 3V7c-1.105 0-2.105.448-2.828 1.172C16.448 8.895 16 9.895 16 11s.448 2.105 1.172 2.828C17.895 14.552 18.895 15 20 15v4c-2.21 0-4.21-.896-5.657-2.343C12.896 15.21 12 13.21 12 11zM4 3v4c1.105 0 2.105.448 2.828 1.172C7.552 8.895 8 9.895 8 11s-.448 2.105-1.172 2.828C6.105 14.552 5.105 15 4 15v4c2.21 0 4.21-.896 5.657-2.343C11.104 15.21 12 13.21 12 11" /></svg>
-);
-
 const TARGET_PHRASE = "My voice is my passport, verify me.";
 
 const normalizeText = (text: string) => text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").trim();
 
-const BiometricVerification: React.FC<{
+const VoiceVerificationStep: React.FC<{
     voiceStatus: 'idle' | 'loading' | 'success';
-    fingerprintStatus: 'idle' | 'loading' | 'success';
     onVoiceVerify: () => void;
-    onFingerprintScan: () => void;
-    fingerprintError?: string;
-}> = ({ voiceStatus, fingerprintStatus, onVoiceVerify, onFingerprintScan, fingerprintError }) => {
+}> = ({ voiceStatus, onVoiceVerify }) => {
     
     const [isRecording, setIsRecording] = useState(false);
     const [voiceError, setVoiceError] = useState('');
@@ -110,7 +103,7 @@ const BiometricVerification: React.FC<{
         recognition.start();
     };
 
-    const isFullyVerified = voiceStatus === 'success' && fingerprintStatus === 'success';
+    const isFullyVerified = voiceStatus === 'success';
 
     if (isFullyVerified) {
         return (
@@ -124,12 +117,11 @@ const BiometricVerification: React.FC<{
     }
     
     return (
-         <div className={`relative p-4 sm:p-6 border-2 border-dashed rounded-2xl transition-all duration-300 min-h-[200px] w-full flex flex-col items-center justify-center
+         <div className={`relative p-4 sm:p-6 border-2 border-dashed rounded-2xl transition-all duration-300 w-full flex flex-col items-center justify-center
                 shadow-md shadow-green-500/10 border-white/10 bg-black/20
             `}
         >
-            <div className="flex flex-col items-center justify-center space-y-4 w-full">
-                {/* Voice Section */}
+            <div className="flex flex-col items-center justify-center w-full">
                 <button 
                     onClick={handleRecord}
                     disabled={voiceStatus !== 'idle' || isRecording}
@@ -150,34 +142,6 @@ const BiometricVerification: React.FC<{
                             </p>
                             {voiceStatus !== 'success' && <p className="text-sm text-gray-400">And say: "{TARGET_PHRASE}"</p>}
                             {voiceError && <p className="text-xs text-red-400 mt-1">{voiceError}</p>}
-                        </div>
-                    </div>
-                </button>
-
-                {/* Divider */}
-                <div className="w-11/12 h-px bg-white/10"></div>
-                
-                {/* Fingerprint Section */}
-                <button 
-                    onClick={onFingerprintScan}
-                    disabled={fingerprintStatus !== 'idle'}
-                    className="w-full p-4 rounded-lg hover:bg-white/5 transition-colors disabled:cursor-not-allowed disabled:hover:bg-transparent group"
-                >
-                    <div className="flex items-center text-left space-x-4">
-                        <div className={`relative w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-full transition-all duration-300 ${fingerprintStatus === 'loading' ? 'bg-green-500/10' : 'bg-black/30'} border-2 ${fingerprintStatus === 'success' ? 'border-green-400/50' : 'border-white/10'}`}>
-                            {fingerprintStatus === 'loading' && <div className="absolute inset-0 rounded-full border-2 border-green-400 animate-spin" style={{ animationDuration: '1.5s' }}></div>}
-                            {fingerprintStatus === 'success' ? (
-                                <svg className="w-7 h-7 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path></svg>
-                            ) : (
-                                <FingerprintIcon className={`w-7 h-7 transition-colors duration-300 ${fingerprintStatus === 'loading' ? 'text-green-300' : 'text-gray-400 group-hover:text-white'}`} />
-                            )}
-                        </div>
-                        <div className="flex-1">
-                            <p className={`font-semibold text-lg ${fingerprintStatus === 'success' ? 'text-green-300' : 'text-white'}`}>
-                                {fingerprintStatus === 'loading' ? 'Verifying...' : (fingerprintStatus === 'success' ? 'Biometrics Verified' : 'Verify with Biometrics')}
-                            </p>
-                            {fingerprintStatus !== 'success' && <p className="text-sm text-gray-400">Uses your device's secure sensor.</p>}
-                            {fingerprintError && <p className="text-xs text-red-400 mt-1">{fingerprintError}</p>}
                         </div>
                     </div>
                 </button>
@@ -227,8 +191,6 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({ setActiveTab })
     const { state, dispatch } = useTagId();
     const { showToast } = useToast();
     const [voiceStatus, setVoiceStatus] = useState<'idle' | 'loading' | 'success'>(state.isHuman ? 'success' : 'idle');
-    const [fingerprintStatus, setFingerprintStatus] = useState<'idle' | 'loading' | 'success'>(state.fingerprintVerified ? 'success' : 'idle');
-    const [fingerprintError, setFingerprintError] = useState('');
     const [isFetchingNationality, setIsFetchingNationality] = useState(false);
     const navigatedRef = useRef(false);
 
@@ -254,7 +216,7 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({ setActiveTab })
 
     useEffect(() => {
         const legalInfoComplete = !!state.legalInfo.name && !!state.legalInfo.idCategory && !!state.legalInfo.idNumber && !!state.legalInfo.dob;
-        const isComplete = state.isHuman && state.fingerprintVerified && legalInfoComplete;
+        const isComplete = state.isHuman && legalInfoComplete;
 
         if (isComplete && !navigatedRef.current) {
             navigatedRef.current = true;
@@ -262,7 +224,7 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({ setActiveTab })
                 setActiveTab('profile');
             }, 1200);
         }
-    }, [state.isHuman, state.fingerprintVerified, state.legalInfo, setActiveTab]);
+    }, [state.isHuman, state.legalInfo, setActiveTab]);
 
     const handleVoiceVerification = () => {
         setVoiceStatus('loading');
@@ -271,27 +233,6 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({ setActiveTab })
             dispatch({ type: 'SET_IS_HUMAN', payload: true });
             setVoiceStatus('success');
         }, 800);
-    };
-
-    const handleFingerprintScan = async () => {
-        setFingerprintError('');
-        setFingerprintStatus('loading');
-
-        try {
-            const result = await verifyBiometrics();
-
-            if (result.success) {
-                dispatch({ type: 'SET_FINGERPRINT_VERIFIED', payload: true });
-                setFingerprintStatus('success');
-            } else {
-                setFingerprintError('Verification failed. Please try again.');
-                setFingerprintStatus('idle');
-            }
-        } catch (err) {
-            console.error('Biometric verification error:', err);
-            setFingerprintError('An unexpected error occurred. Please try again.');
-            setFingerprintStatus('idle');
-        }
     };
 
     const handleLegalChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -305,15 +246,12 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({ setActiveTab })
         <div className="flex flex-col space-y-6">
             <div className="text-center">
                 <h2 className="text-2xl font-bold">Human Verification</h2>
-                <p className="text-gray-400 mt-1">Complete these steps to prove you're human.</p>
+                <p className="text-gray-400 mt-1">Complete this step to prove you're human.</p>
             </div>
             
-            <BiometricVerification 
+            <VoiceVerificationStep 
                 voiceStatus={voiceStatus}
-                fingerprintStatus={fingerprintStatus}
                 onVoiceVerify={handleVoiceVerification}
-                onFingerprintScan={handleFingerprintScan}
-                fingerprintError={fingerprintError}
             />
 
             <div className="space-y-4 pt-6 animate-fade-in">

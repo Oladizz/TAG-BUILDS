@@ -1,13 +1,12 @@
-
 import React, { createContext, useReducer, useContext, Dispatch } from 'react';
 import type { TagIdState, Action } from '../types';
 
-const initialState: TagIdState = {
+// This is the state for a new user, or after resetting.
+const emptyState: TagIdState = {
     tagName: "",
     isAvailable: null,
     isHuman: false,
     legalInfo: { name: "", idCategory: "", idNumber: "", dob: "", nationality: "" },
-    fingerprintVerified: false,
     socials: [],
     pfp: "",
     bio: "",
@@ -16,6 +15,35 @@ const initialState: TagIdState = {
     mintStatus: "idle",
     tokenURI: "",
 };
+
+
+// --- MOCK DATA FOR TESTING ---
+const mockState: TagIdState = {
+    tagName: "kyra.tag",
+    isAvailable: true,
+    isHuman: true,
+    legalInfo: {
+        name: "Kyra Tester",
+        idCategory: "passport",
+        idNumber: "T12345678",
+        dob: "1995-05-15",
+        nationality: "United States"
+    },
+    socials: [
+        { id: '1', url: 'https://twitter.com/kyra_builds' },
+        { id: '2', url: 'https://github.com/kyra-dev' },
+    ],
+    pfp: "https://i.postimg.cc/T24cJsQ1/Laurel-20250605-173322-0001.png",
+    bio: "Onchain identity enthusiast, building the future on Base. Exploring decentralized systems and creating cool things.",
+    skills: ["Developer", "Web3 Enthustiast", "Blockchain dev", "Solidity development"],
+    isProfileSaved: true,
+    mintStatus: "idle",
+    tokenURI: "",
+};
+// --- END MOCK DATA ---
+
+
+const initialState: TagIdState = emptyState;
 
 const TagIdContext = createContext<{
     state: TagIdState;
@@ -36,8 +64,6 @@ const tagIdReducer = (state: TagIdState, action: Action): TagIdState => {
             return { ...state, isHuman: action.payload };
         case 'SET_LEGAL_INFO':
             return { ...state, legalInfo: { ...state.legalInfo, ...action.payload }, isProfileSaved: false };
-        case 'SET_FINGERPRINT_VERIFIED':
-            return { ...state, fingerprintVerified: action.payload };
         case 'SET_SOCIALS':
             return { ...state, socials: action.payload, isProfileSaved: false };
         case 'SET_PFP':
@@ -55,7 +81,7 @@ const tagIdReducer = (state: TagIdState, action: Action): TagIdState => {
         case 'SET_FULL_STATE':
             return { ...action.payload };
         case 'RESET_STATE':
-            return initialState;
+            return emptyState;
         default:
             return state;
     }
@@ -63,6 +89,9 @@ const tagIdReducer = (state: TagIdState, action: Action): TagIdState => {
 
 export const TagIdProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [state, dispatch] = useReducer(tagIdReducer, initialState);
+    
+    // NOTE: Local storage persistence is temporarily disabled for testing with mock data.
+
     return (
         <TagIdContext.Provider value={{ state, dispatch }}>
             {children}

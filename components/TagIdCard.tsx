@@ -3,98 +3,91 @@ import type { TagIdState } from '../types';
 import { detectPlatform, getPlatformIcon } from './icons/SocialIcons';
 import { TagIcon } from './icons/TagIcon';
 
+const BaseNetworkIcon = () => (
+    <div className="w-7 h-7 flex items-center justify-center rounded-full bg-blue-500">
+        <div className="w-4 h-0.5 bg-white rounded-full"></div>
+    </div>
+);
+
 interface TagIdCardProps {
     state: TagIdState;
     isGlassmorphism?: boolean;
 }
 
-const TagIdCard: React.FC<TagIdCardProps> = ({ state, isGlassmorphism = false }) => {
-    const cardClasses = isGlassmorphism
-        ? 'bg-black/20 backdrop-blur-2xl border border-white/10 shadow-xl shadow-green-500/20'
-        : 'bg-gray-900/80 border border-gray-700 shadow-lg shadow-green-500/10';
-
-    const getTagNameFontSize = (name: string): string => {
-        const nameLength = name.length;
-        if (nameLength <= 10) return 'text-3xl';
-        if (nameLength <= 15) return 'text-2xl';
-        if (nameLength <= 20) return 'text-xl';
-        if (nameLength <= 25) return 'text-lg';
-        return 'text-base';
-    };
-
-    const tagNameFontSize = getTagNameFontSize(state.tagName || 'your.tag');
-
+const TagIdCard: React.FC<TagIdCardProps> = ({ state }) => {
     return (
         <div
-            className={`w-full max-w-sm mx-auto rounded-3xl p-6 shadow-2xl transition-all duration-300 relative overflow-hidden ${cardClasses}`}
-            style={{ transformStyle: 'preserve-3d' }}
+            className="w-full max-w-sm mx-auto rounded-3xl p-6 shadow-2xl relative overflow-hidden bg-black border border-white/10 text-white"
         >
-            {/* Background glow */}
-            <div data-glow className="absolute top-1/2 left-1/2 w-72 h-72 bg-green-400/30 rounded-full blur-3xl opacity-60 -translate-x-1/2 -translate-y-1/2 transition-transform duration-200 ease-out"></div>
+            {/* Background Circle */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[550px] h-[550px] bg-green-900/60 rounded-full blur-xl" style={{ top: '65%' }}></div>
             
-            <div data-content className="relative z-10 transition-transform duration-200 ease-out">
+            <div className="relative z-10 flex flex-col h-[450px]">
+                {/* Header */}
                 <div className="flex justify-between items-start">
-                    <div className="flex items-start space-x-3 min-w-0">
-                        <TagIcon className="w-8 h-8 text-green-300 mt-1 flex-shrink-0" />
-                        <div className="bg-clip-text text-transparent bg-gradient-to-br from-green-300 to-green-200 min-w-0">
-                            <p className="text-sm font-semibold tracking-wider uppercase">TAG ID</p>
-                            <h2 className={`${tagNameFontSize} font-bold tracking-tight break-all`}>{state.tagName || 'your.tag'}</h2>
+                    <div className="flex items-center space-x-4">
+                        <TagIcon className="w-9 h-9 flex-shrink-0" />
+                        <div className="bg-green-300 rounded-md px-4 py-2">
+                             <h2 className="text-xl font-bold text-black tracking-tight break-all">
+                                {state.tagName || 'your.tag'}
+                            </h2>
                         </div>
                     </div>
-                    <div data-pfp className="w-20 h-20 rounded-full bg-gray-800 border-2 border-white/20 overflow-hidden shadow-lg flex-shrink-0 ml-4 transition-transform duration-200 ease-out">
+                    <div className="w-20 h-20 rounded-full bg-gray-800 border-2 border-green-400/30 overflow-hidden shadow-lg flex-shrink-0 ml-4">
                         {state.pfp ? (
                             <img src={state.pfp} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                                <svg className="w-10 h-10 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                            </div>
+                            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900"></div>
                         )}
                     </div>
                 </div>
 
-                {state.bio && (
-                    <p className="mt-6 text-sm text-gray-300 leading-snug">{state.bio}</p>
-                )}
-                
-                {state.skills && state.skills.length > 0 && (
-                     <div className="mt-4 flex flex-wrap gap-2">
-                        {state.skills.map(skill => (
-                            <span key={skill} className="px-2.5 py-1 text-xs font-semibold text-green-200 bg-green-500/20 rounded-full">
-                                {skill}
-                            </span>
-                        ))}
+                {/* Main Content Area */}
+                <div className="flex-grow pt-8">
+                    {state.bio && (
+                        <p className="text-base text-gray-200 leading-relaxed">{state.bio}</p>
+                    )}
+                    
+                    {state.skills && state.skills.length > 0 && (
+                         <div className="mt-5 flex flex-wrap gap-2">
+                            {state.skills.map(skill => (
+                                <span key={skill} className="px-3 py-1.5 text-sm font-medium text-white bg-green-500/60 rounded-full">
+                                    {skill}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="mt-6 flex items-center space-x-5">
+                        {state.socials.filter(s => s.url && detectPlatform(s.url) !== 'unknown').map(social => {
+                            const platform = detectPlatform(social.url);
+                            const icon = getPlatformIcon(platform);
+                            return (
+                                <a 
+                                    key={social.id}
+                                    href={social.url} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="text-gray-300 hover:text-white transition-colors"
+                                    aria-label={platform}
+                                >
+                                    <span className="w-6 h-6 block">{icon}</span>
+                                </a>
+                            );
+                        })}
                     </div>
-                )}
-
-                <div className="mt-6 flex items-center space-x-3">
-                    {state.socials.filter(s => s.url && detectPlatform(s.url) !== 'unknown').map(social => {
-                        const platform = detectPlatform(social.url);
-                        const icon = getPlatformIcon(platform);
-
-                        return (
-                            <a 
-                                key={social.id}
-                                href={social.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="text-gray-400 hover:text-white transition-colors"
-                                aria-label={platform}
-                            >
-                                <span className="w-5 h-5 block">{icon}</span>
-                            </a>
-                        );
-                    })}
                 </div>
 
-                <div className="mt-8 pt-4 border-t border-white/10 flex justify-between items-center">
-                     <div 
-                        className="flex items-center space-x-2"
-                        title={state.isHuman ? "This identity has been verified as human." : "Human verification pending. Complete the 'Verify' step."}
-                     >
-                        <div className={`w-3 h-3 rounded-full transition-colors ${state.isHuman ? 'bg-green-400 shadow-[0_0_8px_theme(colors.green.400)]' : 'bg-gray-600'}`}></div>
-                        <p className="text-xs font-medium text-gray-400">Human Verified</p>
+                {/* Footer */}
+                <div className="mt-auto">
+                    <div className="border-t border-white/20"></div>
+                    <div className="pt-4 flex justify-between items-center">
+                        <div className="flex items-center space-x-2">
+                            <div className={`w-3.5 h-3.5 rounded-full transition-colors ${state.isHuman ? 'bg-green-400 shadow-[0_0_8px_theme(colors.green.400)]' : 'bg-gray-600'}`}></div>
+                            <p className="text-sm font-medium text-gray-300">Human Verified</p>
+                        </div>
+                        <BaseNetworkIcon />
                     </div>
-                    <img src="https://i.postimg.cc/FKmFxZ1P/u-b-52a61660-82d7-11ee-beed-414173dd7838.png" alt="Base Network" className="h-6 opacity-90"/>
                 </div>
             </div>
         </div>

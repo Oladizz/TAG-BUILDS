@@ -42,12 +42,12 @@ const IdScreen: React.FC<IdScreenProps> = ({ setActiveTab }) => {
     const renderStatus = () => {
         if (isLoading) return null;
         if (state.isAvailable === true) {
-            return <p className="text-green-400 text-sm mt-2 animate-fade-in">✅ Awesome! "{state.tagName}" is available.</p>;
+            return <p className="text-green-400 text-sm animate-fade-in mb-1">✅ Awesome! "{state.tagName}" is available.</p>;
         }
         if (state.isAvailable === false) {
-            return <p className="text-red-400 text-sm mt-2 animate-fade-in">❌ Sorry, that name is taken or invalid.</p>;
+            return <p className="text-red-400 text-sm animate-fade-in mb-1">❌ Sorry, that name is taken or invalid.</p>;
         }
-        return <div className="h-[28px] mt-2"></div>; // Placeholder to prevent layout shift
+        return null;
     };
 
     const inputStatus = state.isAvailable === true ? 'success' : state.isAvailable === false ? 'error' : 'default';
@@ -94,13 +94,19 @@ const IdScreen: React.FC<IdScreenProps> = ({ setActiveTab }) => {
                         value={localName}
                         status={inputStatus}
                         onChange={(e) => {
-                            setLocalName(e.target.value);
+                            const sanitizedValue = e.target.value.toLowerCase().replace(/[^a-z]/g, '');
+                            setLocalName(sanitizedValue);
                             if (state.isAvailable !== null) {
                                dispatch({ type: 'SET_AVAILABILITY', payload: null });
                             }
                         }}
                     />
-                     {renderStatus()}
+                    <div className="mt-2 px-1 min-h-[36px]">
+                        {renderStatus()}
+                        <p className="text-xs text-gray-500">
+                            Only lowercase letters are allowed. No spaces, numbers, or special characters.
+                        </p>
+                    </div>
                 </div>
                 <Button onClick={handleCheck} isLoading={isLoading} disabled={!localName} className="mt-[2px]">
                     Check

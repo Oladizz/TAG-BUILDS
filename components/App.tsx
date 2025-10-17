@@ -17,12 +17,14 @@ import LandingPage from './LandingPage';
 import FloatingProfileTags from './FloatingProfileTags';
 
 export type Tab = 'id' | 'verify' | 'profile' | 'mint';
+type AppStatus = 'landing' | 'initializing' | 'wizard' | 'explorer';
 
 interface WizardProps {
     onLogoClick: () => void;
+    setAppStatus: (status: AppStatus) => void;
 }
 
-const Wizard: React.FC<WizardProps> = ({ onLogoClick }) => {
+const Wizard: React.FC<WizardProps> = ({ onLogoClick, setAppStatus }) => {
     const [activeTab, setActiveTab] = useState<Tab>('id');
 
     const renderActiveScreen = () => {
@@ -34,7 +36,7 @@ const Wizard: React.FC<WizardProps> = ({ onLogoClick }) => {
             case 'profile':
                 return <ProfileScreen setActiveTab={setActiveTab} />;
             case 'mint':
-                return <MintScreen />;
+                return <MintScreen setAppStatus={setAppStatus} />;
             default:
                 return <IdScreen setActiveTab={setActiveTab} />;
         }
@@ -69,10 +71,10 @@ const Wizard: React.FC<WizardProps> = ({ onLogoClick }) => {
 
 
 const AppContent: React.FC = () => {
-    const { state, dispatch } = useTagId();
+    const { dispatch } = useTagId();
     const { walletAddress, isConnected } = useWallet();
     
-    const [appStatus, setAppStatus] = useState<'landing' | 'initializing' | 'wizard' | 'explorer'>('landing');
+    const [appStatus, setAppStatus] = useState<AppStatus>('landing');
 
     useEffect(() => {
         const checkForExistingId = async () => {
@@ -83,10 +85,9 @@ const AppContent: React.FC = () => {
                         dispatch({ type: 'SET_FULL_STATE', payload: existingId });
                         setAppStatus('explorer');
                     } else {
-                        // Wallet connected, but no ID, start the wizard
-                        if (!state.tagName) { // only reset if no name was passed from landing
-                            dispatch({ type: 'RESET_STATE' });
-                        }
+                        // Wallet connected, but no minted ID.
+                        // The state is already loaded from localStorage by TagIdProvider.
+                        // Just go to the wizard.
                         setAppStatus('wizard');
                     }
                 } catch (error) {
@@ -95,10 +96,8 @@ const AppContent: React.FC = () => {
                     setAppStatus('wizard');
                 }
             } else {
-                 // Not connected, go to wizard
-                if (!state.tagName) { // only reset if no name was passed from landing
-                    dispatch({ type: 'RESET_STATE' });
-                }
+                 // Not connected, go to wizard.
+                 // TagIdProvider will have reset the state.
                 setAppStatus('wizard');
             }
         };
@@ -106,14 +105,7 @@ const AppContent: React.FC = () => {
         if (appStatus === 'initializing') {
             checkForExistingId();
         }
-    }, [isConnected, walletAddress, dispatch, appStatus, state.tagName]);
-
-    // This effect handles the transition from wizard to explorer upon successful minting
-    useEffect(() => {
-        if (state.mintStatus === 'success' && appStatus === 'wizard') {
-            setAppStatus('explorer');
-        }
-    }, [state.mintStatus, appStatus]);
+    }, [isConnected, walletAddress, dispatch, appStatus]);
 
     const handleLaunchApp = (name?: string) => {
         if (name) {
@@ -143,7 +135,7 @@ const AppContent: React.FC = () => {
             <TagIdExplorer />
         </div>
     ) : (
-        <Wizard onLogoClick={goToLanding} />
+        <Wizard onLogoClick={goToLanding} setAppStatus={setAppStatus} />
     );
 
     return (
@@ -169,13 +161,13 @@ const App: React.FC = () => {
     }
 
     return (
-        <TagIdProvider>
-            <ToastProvider>
-                <WalletProvider>
+        <ToastProvider>
+            <WalletProvider>
+                <TagIdProvider>
                     <AppContent />
-                </WalletProvider>
-            </ToastProvider>
-        </TagIdProvider>
+                </TagIdProvider>
+            </WalletProvider>
+        </ToastProvider>
     );
 };
 
