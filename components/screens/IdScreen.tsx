@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTagId } from '../../context/TagIdContext';
-import { checkAvailability } from '../../services/mockContract';
+import { checkTagNameAvailability } from '../../services/backendApi';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import TagIdCard from '../TagIdCard';
@@ -30,7 +30,7 @@ const IdScreen: React.FC<IdScreenProps> = ({ setActiveTab }) => {
         const cleanedName = localName.trim().replace(/\.tag$/i, '');
         const fullName = `${cleanedName}.tag`;
 
-        const isAvailable = await checkAvailability(fullName);
+        const isAvailable = await checkTagNameAvailability(fullName);
         dispatch({ type: 'SET_AVAILABILITY', payload: isAvailable });
         if (isAvailable) {
             dispatch({ type: 'SET_TAG_NAME', payload: fullName });
