@@ -24,11 +24,18 @@ app.use(express.json({ limit: '50mb' }));
 app.use('/api', tagRoutes);
 
 // Serve frontend static files
-app.use(express.static(path.join(__dirname, '../../dist')));
+app.use(express.static(path.join(__dirname, '../../../dist')));
 
 // Catch-all to serve index.html for client-side routing
 app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, '../../dist', 'index.html'));
+  const filePath = path.join(__dirname, '../../../dist', 'index.html');
+  console.log('CATCH-ALL: Attempting to send file:', filePath);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error('SEND_FILE_ERROR:', err);
+      res.status(500).send(err);
+    }
+  });
 });
 
 console.log('Connecting to MongoDB...');

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: tag-builds
+    env: node
+    plan: free
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm start"
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: BASE_SEPOLIA_RPC_URL
+        sync: false
+      - key: BACKEND_SIGNER_PRIVATE_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
