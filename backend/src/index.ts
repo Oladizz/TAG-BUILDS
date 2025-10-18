@@ -5,7 +5,9 @@ import dotenv from 'dotenv';
 import tagRoutes from './routes/tags';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config();
+
+console.log('MONGO_URI:', process.env.MONGO_URI);
 
 const app = express();
 const port = parseInt(process.env.PORT || '3001', 10);
