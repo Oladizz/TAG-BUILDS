@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import tagRoutes from './routes/tags';
 import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app = express();
 const port = parseInt(process.env.PORT || '3001', 10);
@@ -25,7 +25,7 @@ app.use('/api', tagRoutes);
 app.use(express.static(path.join(__dirname, '../../dist')));
 
 // Catch-all to serve index.html for client-side routing
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, '../../dist', 'index.html'));
 });
 
