@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { toPng } from 'html-to-image';
 import { useTagId } from '../../context/TagIdContext';
 import { useWallet } from '../../context/WalletContext';
