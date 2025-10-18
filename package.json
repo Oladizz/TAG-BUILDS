@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "npm run build:frontend && npm run build:backend",
+    "preview": "vite preview",
+    "start": "node backend/dist/src/index.js",
+    "build:frontend": "vite build",
+    "build:backend": "cd backend && npm install && tsc"
   },
   "dependencies": {
     "html-to-image": "^1.11.13",
