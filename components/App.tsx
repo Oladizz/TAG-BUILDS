@@ -71,10 +71,16 @@ const Wizard: React.FC<WizardProps> = ({ onLogoClick, setAppStatus }) => {
 
 
 const AppContent: React.FC = () => {
-    const { dispatch } = useTagId();
+    const { state, dispatch } = useTagId();
     const { walletAddress, isConnected } = useWallet();
     
     const [appStatus, setAppStatus] = useState<AppStatus>('landing');
+
+    useEffect(() => {
+        if (state.mintStatus === 'success') {
+            setAppStatus('explorer');
+        }
+    }, [state.mintStatus]);
 
     useEffect(() => {
         const checkForExistingId = async () => {
@@ -120,8 +126,12 @@ const AppContent: React.FC = () => {
         setAppStatus('landing');
     };
 
+    const handleGoToExplorer = () => {
+        setAppStatus('explorer');
+    };
+
     if (appStatus === 'landing') {
-        return <LandingPage onLaunch={handleLaunchApp} />;
+        return <LandingPage onLaunch={handleLaunchApp} onGoToExplorer={handleGoToExplorer} />;
     }
 
     if (appStatus === 'initializing') {
@@ -132,7 +142,7 @@ const AppContent: React.FC = () => {
         <div className="relative h-full w-full selection:bg-green-500/30">
             <BackgroundTags />
             <ToastContainer />
-            <TagIdExplorer />
+            <TagIdExplorer setAppStatus={setAppStatus} />
         </div>
     ) : (
         <Wizard onLogoClick={goToLanding} setAppStatus={setAppStatus} />

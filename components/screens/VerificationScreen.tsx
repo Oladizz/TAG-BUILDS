@@ -226,6 +226,8 @@ const VerificationScreen: React.FC<VerificationScreenProps> = ({ setActiveTab })
         }
     }, [state.isHuman, state.legalInfo, setActiveTab]);
 
+
+
     const handleVoiceVerification = () => {
         setVoiceStatus('loading');
         // Simulate a brief processing time for better UX

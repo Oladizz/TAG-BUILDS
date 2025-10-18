@@ -149,4 +149,20 @@ router.get('/tag/:tagName', async (req, res) => {
   }
 });
 
+
+// GET /api/stats
+router.get('/stats', async (req, res) => {
+  try {
+    const provider = new ethers.JsonRpcProvider(process.env.BASE_SEPOLIA_RPC_URL);
+    const contract = new ethers.Contract(contractAddress, contractABI, provider);
+
+    const totalMinted = await contract.totalMinted();
+
+    res.json({ totalMinted: totalMinted.toString() });
+  } catch (error) {
+    console.error('Error getting stats:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 export default router;

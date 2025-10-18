@@ -17,33 +17,29 @@ interface TagIdCardProps {
 const TagIdCard: React.FC<TagIdCardProps> = ({ state }) => {
     return (
         <div
-            className="w-full max-w-sm mx-auto rounded-3xl p-6 shadow-2xl relative overflow-hidden bg-black border border-white/10 text-white"
+            className="w-full max-w-lg mx-auto rounded-3xl p-6 shadow-2xl relative overflow-hidden bg-black border border-white/10 text-white"
         >
+            <TagIcon className="absolute top-6 left-6 w-9 h-9" />
             {/* Background Circle */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[550px] h-[550px] bg-green-900/60 rounded-full blur-xl" style={{ top: '65%' }}></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-green-900/60 rounded-full blur-xl" style={{ top: '65%' }}></div>
             
-            <div className="relative z-10 flex flex-col h-[450px]">
+            <div className="relative z-10 flex flex-col">
                 {/* Header */}
-                <div className="flex justify-between items-start">
-                    <div className="flex items-center space-x-4">
-                        <TagIcon className="w-9 h-9 flex-shrink-0" />
-                        <div className="bg-green-300 rounded-md px-4 py-2">
-                             <h2 className="text-xl font-bold text-black tracking-tight break-all">
-                                {state.tagName || 'your.tag'}
-                            </h2>
+                <div className="flex justify-center mb-4">
+                    <div className="flex items-center space-x-4 whitespace-nowrap text-lg font-medium text-gray-200 bg-white/5 backdrop-blur-sm rounded-full pl-4 pr-6 py-3 border border-white/10">
+                        <div className="w-16 h-16 rounded-full overflow-hidden shrink-0">
+                            {state.pfp ? (
+                                <img src={state.pfp} alt="Profile" className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
+                            )}
                         </div>
-                    </div>
-                    <div className="w-20 h-20 rounded-full bg-gray-800 border-2 border-green-400/30 overflow-hidden shadow-lg flex-shrink-0 ml-4">
-                        {state.pfp ? (
-                            <img src={state.pfp} alt="Profile" className="w-full h-full object-cover" />
-                        ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900"></div>
-                        )}
+                        <span className="font-bold text-2xl">{state.tagName || 'your.tag'}</span>
                     </div>
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-grow pt-8">
+                <div className="flex-grow">
                     {state.bio && (
                         <p className="text-base text-gray-200 leading-relaxed">{state.bio}</p>
                     )}

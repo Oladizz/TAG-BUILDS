@@ -6,6 +6,7 @@ import { Button } from './ui/Button';
 
 interface LandingPageProps {
     onLaunch: (name?: string) => void;
+    onGoToExplorer: () => void;
 }
 
 const FAQ_DATA = [
@@ -76,7 +77,7 @@ const useAnimateOnScroll = (options?: IntersectionObserverInit) => {
     return [ref, isVisible] as const;
 };
 
-const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onLaunch, onGoToExplorer }) => {
     const [name, setName] = useState('');
 
     const [heroRef, isHeroVisible] = useAnimateOnScroll();
@@ -130,6 +131,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLaunch }) => {
                             />
                             <Button onClick={handleStart} disabled={!name} className="py-2.5 px-6 text-lg font-medium whitespace-nowrap">
                                 .tag
+                            </Button>
+                        </div>
+                        <div className="mt-6">
+                            <Button onClick={onGoToExplorer} variant="secondary">
+                                Go to Explorer
                             </Button>
                         </div>
                     </div>

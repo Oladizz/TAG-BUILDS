@@ -22,19 +22,23 @@ const MintScreen: React.FC<MintScreenProps> = ({ setAppStatus }) => {
     const { walletAddress, isConnected, connectWallet } = useWallet();
     const { showToast, hideToast } = useToast();
     const cardRef = useRef<HTMLDivElement>(null);
+    const [duration, setDuration] = useState(1);
     
     const isReadyToMint = !!state.tagName && state.isAvailable === true && state.isHuman && !!state.legalInfo.name;
 
-    const calculateMintPrice = (tagName: string): string => {
-        if (!tagName) return '0.005'; // Default price
+    const calculateMintPrice = (tagName: string, duration: number): string => {
+        if (!tagName) return (0.005 * Math.pow(2, duration - 1)).toFixed(4);
         const nameLength = tagName.replace('.tag', '').length;
-        if (nameLength <= 2) return '0.08';
-        if (nameLength === 3) return '0.05';
-        if (nameLength === 4) return '0.02';
-        return '0.005'; // 5+ characters
+        let basePrice = 0.005;
+        if (nameLength <= 2) basePrice = 0.08;
+        else if (nameLength === 3) basePrice = 0.05;
+        else if (nameLength === 4) basePrice = 0.02;
+        
+        const finalPrice = basePrice * Math.pow(2, duration - 1);
+        return finalPrice.toFixed(4);
     };
 
-    const mintPrice = calculateMintPrice(state.tagName);
+    const mintPrice = calculateMintPrice(state.tagName, duration);
 
     const handleMint = async () => {
         if (!isConnected || !walletAddress) {
@@ -51,7 +55,24 @@ const MintScreen: React.FC<MintScreenProps> = ({ setAppStatus }) => {
         showToast({ message: 'Generating ID card image...', type: 'loading' });
 
         try {
-            const dataUrl = await toPng(cardRef.current, { cacheBust: true });
+            const node = cardRef.current;
+            const scale = window.devicePixelRatio;
+            const cardWidth = node.offsetWidth;
+            const cardHeight = node.offsetHeight;
+            const requiredHeight = cardHeight * 0.65 + 500;
+
+            const options = {
+                cacheBust: true,
+                width: cardWidth * scale,
+                height: requiredHeight * scale,
+                style: {
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'top left',
+                    width: `${cardWidth}px`,
+                    height: `${requiredHeight}px`,
+                }
+            };
+            const dataUrl = await toPng(node, options);
             showToast({ message: 'Requesting transaction confirmation...', type: 'loading' });
 
             const result = await mintTagID(walletAddress, state.tagName, dataUrl);
@@ -84,6 +105,44 @@ const MintScreen: React.FC<MintScreenProps> = ({ setAppStatus }) => {
         return `Pay ${mintPrice} ETH & Mint`;
     };
 
+    const handleDownload = async () => {
+        if (!cardRef.current) {
+            showToast({ message: 'Card element not found.', type: 'error' });
+            return;
+        }
+
+        showToast({ message: 'Generating image for download...', type: 'loading' });
+
+        try {
+            const node = cardRef.current;
+            const scale = window.devicePixelRatio;
+            const cardWidth = node.offsetWidth;
+            const cardHeight = node.offsetHeight;
+            const requiredHeight = cardHeight * 0.65 + 500;
+
+            const options = {
+                cacheBust: true,
+                width: cardWidth * scale,
+                height: requiredHeight * scale,
+                style: {
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'top left',
+                    width: `${cardWidth}px`,
+                    height: `${requiredHeight}px`,
+                }
+            };
+            const dataUrl = await toPng(node, options);
+            const link = document.createElement('a');
+            link.download = 'tag-id-card.png';
+            link.href = dataUrl;
+            link.click();
+            hideToast();
+        } catch (error) {
+            console.error('Failed to generate image:', error);
+            showToast({ message: 'Failed to generate image.', type: 'error' });
+        }
+    };
+
     return (
         <div className="flex flex-col items-center space-y-6">
             <div className="text-center">
@@ -96,8 +155,29 @@ const MintScreen: React.FC<MintScreenProps> = ({ setAppStatus }) => {
                 </p>
             </div>
             
-            <div className="w-full max-w-sm my-4" ref={cardRef}>
+            <div className="w-full max-w-lg my-4" ref={cardRef}>
               <TagIdCard state={state} isGlassmorphism={true} />
+            </div>
+
+            <div className="w-full max-w-sm">
+                <label htmlFor="duration-slider" className="block text-sm font-medium text-gray-400 mb-2">
+                    Registration Duration: {duration * 6} months
+                </label>
+                <input
+                    id="duration-slider"
+                    type="range"
+                    min="1"
+                    max="4"
+                    value={duration}
+                    onChange={(e) => setDuration(Number(e.target.value))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                />
+                <div className="flex justify-between text-xs text-gray-500 mt-1">
+                    <span>6m</span>
+                    <span>12m</span>
+                    <span>18m</span>
+                    <span>24m</span>
+                </div>
             </div>
 
             {/* Price Display */}
@@ -124,15 +204,26 @@ const MintScreen: React.FC<MintScreenProps> = ({ setAppStatus }) => {
             </div>
 
             <div className="w-full pt-2 max-w-sm">
-                <Button 
-                    onClick={isConnected ? handleMint : connectWallet} 
-                    isLoading={state.mintStatus === 'minting'} 
-                    disabled={state.mintStatus === 'minting' || state.mintStatus === 'error' || (isConnected && !isReadyToMint)}
-                    className="w-full"
-                >
-                    {getButtonText()}
-                </Button>
+                <div className="flex flex-col space-y-4">
+                    <Button 
+                        onClick={isConnected ? handleMint : connectWallet} 
+                        isLoading={state.mintStatus === 'minting'} 
+                        disabled={state.mintStatus === 'minting' || state.mintStatus === 'error' || (isConnected && !isReadyToMint)}
+                        className="w-full"
+                    >
+                        {getButtonText()}
+                    </Button>
+                    <Button 
+                        onClick={handleDownload} 
+                        variant="secondary"
+                        className="w-full"
+                    >
+                        Download Card Image
+                    </Button>
+                </div>
             </div>
+
+
         </div>
     );
 };

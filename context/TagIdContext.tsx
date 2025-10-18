@@ -19,11 +19,11 @@ const emptyState: TagIdState = {
 
 // --- MOCK DATA FOR TESTING ---
 const mockState: TagIdState = {
-    tagName: "kyra.tag",
+    tagName: "gemini-builder.tag",
     isAvailable: true,
     isHuman: true,
     legalInfo: {
-        name: "Kyra Tester",
+        name: "Gemini Builder",
         idCategory: "passport",
         idNumber: "T12345678",
         dob: "1995-05-15",
@@ -33,7 +33,7 @@ const mockState: TagIdState = {
         { id: '1', url: 'https://twitter.com/kyra_builds' },
         { id: '2', url: 'https://github.com/kyra-dev' },
     ],
-    pfp: "https://i.postimg.cc/T24cJsQ1/Laurel-20250605-173322-0001.png",
+    pfp: "https://i.postimg.cc/wx5yYHNx/IMG-20251015-001843-944.jpg",
     bio: "Onchain identity enthusiast, building the future on Base. Exploring decentralized systems and creating cool things.",
     skills: ["Developer", "Web3 Enthustiast", "Blockchain dev", "Solidity development"],
     isProfileSaved: true,
@@ -57,7 +57,7 @@ const tagIdReducer = (state: TagIdState, action: Action): TagIdState => {
     switch (action.type) {
         case 'SET_TAG_NAME':
             // When name changes, profile is no longer "saved" in its current state
-            return { ...state, tagName: action.payload, isAvailable: null, isProfileSaved: false };
+            return { ...state, tagName: action.payload, isProfileSaved: false };
         case 'SET_AVAILABILITY':
             return { ...state, isAvailable: action.payload };
         case 'SET_IS_HUMAN':

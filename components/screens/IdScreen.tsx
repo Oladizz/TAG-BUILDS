@@ -30,13 +30,20 @@ const IdScreen: React.FC<IdScreenProps> = ({ setActiveTab }) => {
         const cleanedName = localName.trim().replace(/\.tag$/i, '');
         const fullName = `${cleanedName}.tag`;
 
-        const isAvailable = await checkTagNameAvailability(fullName);
-        dispatch({ type: 'SET_AVAILABILITY', payload: isAvailable });
-        if (isAvailable) {
-            dispatch({ type: 'SET_TAG_NAME', payload: fullName });
-            setTimeout(() => setActiveTab('verify'), 800);
+        try {
+            const isAvailable = await checkTagNameAvailability(fullName);
+            console.log(`'${fullName}' availability:`, isAvailable);
+            dispatch({ type: 'SET_AVAILABILITY', payload: isAvailable });
+            if (isAvailable) {
+                dispatch({ type: 'SET_TAG_NAME', payload: fullName });
+                setTimeout(() => setActiveTab('verify'), 800);
+            }
+        } catch (error) {
+            console.error('Error checking name availability:', error);
+            dispatch({ type: 'SET_AVAILABILITY', payload: false }); // Set to false on error
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
     };
 
     const renderStatus = () => {

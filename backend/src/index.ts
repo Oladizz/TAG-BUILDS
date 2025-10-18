@@ -16,7 +16,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({ origin: 'https://3002-cs-199870033145-default.cs-europe-west1-onse.cloudshell.dev' }));
+app.use(cors({ origin: ['https://3002-cs-199870033145-default.cs-europe-west1-onse.cloudshell.dev', 'http://localhost:3002'] }));
 app.use(express.static('public'));
 app.use(express.json({ limit: '50mb' }));
 
