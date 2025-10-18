@@ -3,7 +3,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import tagRoutes from './routes/tags';
-import cors from 'cors';
+import path from 'path';
 
 dotenv.config();
 
@@ -16,11 +16,18 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({ origin: ['https://3002-cs-199870033145-default.cs-europe-west1-onse.cloudshell.dev', 'http://localhost:3002'] }));
 app.use(express.static('public'));
 app.use(express.json({ limit: '50mb' }));
 
 app.use('/api', tagRoutes);
+
+// Serve frontend static files
+app.use(express.static(path.join(__dirname, '../../dist')));
+
+// Catch-all to serve index.html for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../dist', 'index.html'));
+});
 
 console.log('Connecting to MongoDB...');
 try {
@@ -39,7 +46,3 @@ try {
   console.error('Error connecting to MongoDB:', error);
   process.exit(1);
 }
-
-app.get('/', (req, res) => {
-  res.send('Hello from TAG ID Backend!');
-});
